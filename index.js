@@ -1,39 +1,27 @@
-// function ajax(opts){
-//   var request = new XMLHttpRequest()
-//   request.open(opts.method, opts.url, true)
-//   request.onload = function(){
-//     if (this.status === 200 ) {
-//       var data = JSON.parse( this.response )
-//       opts.success(data)
-//     }
-//   }
-//
-//   request.onerror = function(){
-//     if (opts.error) {
-//       opts.error()
-//     }
-//   }
-//
-//   request.send()
-// }
+function fetchAndRenderBooks(query){
+  var url = `https://www.googleapis.com/books/v1/volumes?q=${query}`
+  $.ajax({
+    url: url,
+    success: renderBooks
+  })
+}
+
+function renderBooks(data){
+    console.log("Abstraction is cool!!!!")
+    console.log(data)
+    const lis = data.items.map(function(book){
+      return `<li>${book.volumeInfo.title}</li>`
+    })
+    $('#books').html( lis.join('') )
+}
 
 $(document).ready(function(){
-  console.log('Document ready!')
-
+  const $input = $('#query')
   // When I submit a form
-  $('form#book-search').on('submit', function(event){
+  $('#book-search').on('submit', function(event){
     event.preventDefault()
-    console.log("Submitted Form!!!")
-    var url = "https://www.googleapis.com/books/v1/volumes?q=ruby+programming"
-    // I want to hit an API
-    $.ajax({
-      url: url,
-      success: function(data){
-        console.log("Abstraction is cool!!!!")
-        console.log(data)
-      }
-    })
+    const query = $input.val()
+    $input.val('')
+    fetchAndRenderBooks(query)
   })
-  // Take the results that I get
-  // and render them out to the page
 })
